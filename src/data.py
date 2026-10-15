@@ -30,3 +30,14 @@ def load_goemotions(root: Path, valid_frac=0.15, seed=42):
 
 def aspect_sentiment(text: str):
     """Rule-based aspect extraction from complaint sentences: (aspect, matches)."""
+    low = text.lower()
+    found = {a: [w for w in ws if w in low] for a, ws in ASPECTS.items()}
+    return {a: hits for a, hits in found.items() if hits}
+
+
+def top_aspects(texts):
+    counter = {}
+    for t in texts:
+        for a in aspect_sentiment(t):
+            counter[a] = counter.get(a, 0) + 1
+    return dict(sorted(counter.items(), key=lambda kv: -kv[1]))
