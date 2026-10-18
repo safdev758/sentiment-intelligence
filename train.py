@@ -24,3 +24,18 @@ SENT_TO_LABEL = {
 
 def detect_root():
     input_dir = Path("/kaggle/input")
+    for cand in sorted(input_dir.iterdir()):
+        if any(cand.rglob("*.csv")):
+            return cand
+    raise SystemExit(f"no CSV in {input_dir}")
+
+
+def main():
+    from src.data import load_goemotions, aspect_sentiment, top_aspects
+    from src.textcat import build_nlp, train_textcat
+
+    args = parse_args()
+    base = Path(args.data_root) if args.data_root else detect_root()
+    df_train, df_val, label_cols = load_goemotions(base)
+    print(f"[DATA] train={len(df_train)} val={len(df_val)} emotion-cols={len(label_cols)}")
+
