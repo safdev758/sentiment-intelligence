@@ -54,3 +54,17 @@ def main():
 
     aspects = top_aspects(df_val["text"].tolist()[:500])
     per_aspect_sentiment = {}
+    for aspect_row in df_val.to_dict("records")[:300]:
+        text = aspect_row["text"]
+        for a, hits in aspect_sentiment(text).items():
+            per_aspect_sentiment.setdefault(a, []).append(to_ternary(aspect_row))
+
+    metrics = {"meta": vars(args), "textcat": textcat_metrics, "aspects": aspects,
+               "aspect_senti_counts": {a: {s: sum(1 for x in c if x == s) for s in label_set} for a, c in per_aspect_sentiment.items()}}
+    Path("output").mkdir(exist_ok=True)
+    Path("output/metrics.json").write_text(json.dumps(metrics, indent=2))
+    print("FINAL:", json.dumps(metrics, indent=1))
+
+
+if __name__ == "__main__":
+    main()
