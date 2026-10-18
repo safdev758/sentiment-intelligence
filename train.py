@@ -39,3 +39,18 @@ def main():
     df_train, df_val, label_cols = load_goemotions(base)
     print(f"[DATA] train={len(df_train)} val={len(df_val)} emotion-cols={len(label_cols)}")
 
+    def to_ternary(row):
+        active = frozenset(l for l in label_cols if row[l] == 1)
+        for label, emos in SENT_TO_LABEL.items():
+            if active & emos:
+                return label
+        return "neutral"
+
+    train_rows = [(t, (to_ternary(r),)) for t, r in zip(df_train["text"], df_train.to_dict("records"))][: args.max_train]
+    val_rows = [(t, (to_ternary(r),)) for t, r in zip(df_val["text"], df_val.to_dict("records"))][: args.max_eval]
+    label_set = set(SENT_TO_LABEL)
+    nlp = build_nlp(label_set)
+    textcat_metrics = train_textcat(nlp, train_rows, val_rows, label_set, epochs=args.epochs, log=print)
+
+    aspects = top_aspects(df_val["text"].tolist()[:500])
+    per_aspect_sentiment = {}
