@@ -34,20 +34,3 @@ def train_textcat(nlp, train_rows, val_rows, label_set, epochs=10, log=print):
         rng.shuffle(shuffled)
         for batch in minibatch(shuffled, size=compounding(4.0, 64.0, 1.001)):
             examples_per_batch = []
-            for text, g in batch:
-                doc = nlp.make_doc(text)
-                exs = spacy.training.Example.from_dict(doc, {"cats": to_cats(g, label_set)})
-                examples_per_batch.append(exs)
-            nlp.update(examples_per_batch, sgd=optimizer, losses=losses, drop=0.3)
-        log(f"[SEN] epoch {epoch}/{epochs} loss={losses.get('textcat', 0):.4f}")
-    y_true, y_pred = [], []
-    for _, t in val_rows:
-        y_true.append(t[0])
-    preds = []
-    for doc in nlp.pipe([t for t, _ in val_rows]):
-        best = max(doc.cats.items(), key=lambda kv: kv[1])
-        preds.append(best[0])
-    acc = accuracy_score(y_true, preds)
-    f1 = f1_score(y_true, preds, average="macro")
-    log(f"[SEN-EVAL] acc={acc:.4f} macro-f1={f1:.4f}")
-    return {"accuracy": round(acc, 4), "macro_f1": round(f1, 4), "confusion": dict(sorted((l, preds.count(l)) for l in label_set))}
