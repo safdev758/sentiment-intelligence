@@ -11,3 +11,15 @@ Multilingual-aspect sentiment pipeline: emotion-to-polarity text classifier + ru
 - accuracy **0.513**, macro-F1 **0.495** (vs. majority-class baseline ~0.44)
 - confusion: negative 229 / neutral 334 / positive 437 (textcat skews positive)
 - aspect counts observed: delivery 6, service 4, price 1, quality 1
+
+Full metrics: `output/run7/output/metrics.json`.
+
+## Layout
+```
+src/textcat.py    pipeline build + train/eval loop
+src/data.py       GoEmotions loader, ternary map, aspect/rule extraction
+train.py          end-to-end kernel script
+tests/            unit tests (mapping, aspect rules)
+```
+
+## Kaggle
