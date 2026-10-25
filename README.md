@@ -23,3 +23,6 @@ tests/            unit tests (mapping, aspect rules)
 ```
 
 ## Kaggle
+Kernel: `sentiment-intelligence-v7` (GPU, dataset `debarshichanda/goemotions`).
+
+## MLflow
