@@ -26,3 +26,9 @@ tests/            unit tests (mapping, aspect rules)
 Kernel: `sentiment-intelligence-v7` (GPU, dataset `debarshichanda/goemotions`).
 
 ## MLflow
+Experiment `sentiment-intelligence_training`.
+
+## Notes / limits
+- Ternary mapping distills 28 emotions; nuance loss is expected and documented.
+- Aspect module is heuristic (not learned); swap in an aspect-BERT for production-grade extraction.
+- Next: TF-IDF/SVM baseline comparison + per-aspect sentiment heads.
